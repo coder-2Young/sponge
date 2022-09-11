@@ -47,7 +47,6 @@ std::string ByteStream::read(const size_t len) {
     pop_output(len);
     return {out_data};
 }
-
 void ByteStream::end_input() {
     _end = true;
 }
@@ -70,3 +69,4 @@ size_t ByteStream::bytes_written() const { return {_bytes_written}; }
 size_t ByteStream::bytes_read() const { return {_bytes_read}; }
 
 size_t ByteStream::remaining_capacity() const { return {_size - buffer_size()}; }
+
