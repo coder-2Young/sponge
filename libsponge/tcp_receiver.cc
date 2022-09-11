@@ -21,14 +21,14 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
     {
         string data = seg.payload().copy();
         uint64_t index = unwrap(seg.header().seqno,_isn,_check_point);
+        if(seg.header().syn) index += 1;
         bool eof = seg.header().fin;
+        uint64_t prev_buffer_size = stream_out().buffer_size();
         _reassembler.push_substring(data, index-1, eof);
-        if(seg.header().seqno == _ackno)
-        {
-            _ackno = _ackno + seg.payload().size();
-            if(seg.header().syn) _ackno = _ackno + 1; 
-            if(eof) _ackno = _ackno + 1;
-        }
+        uint64_t past_buffer_size = stream_out().buffer_size();
+        _ackno = _ackno + past_buffer_size - prev_buffer_size;
+        if(seg.header().syn) _ackno = _ackno + 1; 
+        if(stream_out().input_ended()) _ackno = _ackno + 1;
     }
 }
 
