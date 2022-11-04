@@ -34,9 +34,18 @@ string ByteStream::peek_output(const size_t len) const {
 
 //! \param[in] len bytes will be removed from the output side of the buffer
 void ByteStream::pop_output(const size_t len) {
-    size_t true_len = min(len, buffer_size());
-    buffer = buffer.substr(len,buffer_size() - true_len);
-    _bytes_read += true_len;
+    if(len >= buffer_size())
+    {
+        buffer = "";
+        _bytes_read += buffer_size();
+        return;
+    }
+    else
+    {
+        buffer = buffer.substr(len,buffer_size() - len);
+        _bytes_read += len;  
+        return;
+    }
 }
 
 //! Read (i.e., copy and then pop) the next "len" bytes of the stream

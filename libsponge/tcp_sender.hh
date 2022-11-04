@@ -8,6 +8,7 @@
 
 #include <functional>
 #include <queue>
+#define INIT_RTO 10 // initial valute of RTO
 
 //! \brief The "sender" part of a TCP implementation.
 
@@ -31,6 +32,14 @@ class TCPSender {
 
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
+
+    uint64_t _bytes_in_flight;
+
+    uint16_t _window_size;
+
+    std::queue<TCPSegment> _outstanding_seg{};
+
+    size_t RTO;
 
   public:
     //! Initialize a TCPSender
